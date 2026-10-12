@@ -225,4 +225,304 @@ $('#dFiles').textContent=DATA.meta.fileDuplicates;$('#dPairs').textContent=DATA.
 $('#reusedBody').innerHTML=DATA.duplicates.reusedClaims.map(d=>`<tr><td>${esc(d.section)}</td><td class="nowrap">${d.row1} and ${d.row2}</td><td>${esc(d.name)}</td><td class="num">${INR(d.amount1)} / ${INR(d.amount2)}</td><td>${d.exactClaimMatch?'<span class="flag">Same claimant, amount, date and PDF</span>':'<span class="muted">Same PDF; amounts or dates differ</span>'}</td><td class="source-source">${dupPathsHTML(d)}</td></tr>`).join('')+DATA.duplicates.similarClaims.map(d=>`<tr><td>${esc(d.section)}</td><td>${d.row1} and ${d.row2}</td><td>${esc(d.name)}</td><td class="num">${INR(d.amount)}</td><td><span class="flag">Matching details; different receipt files</span></td><td class="source-source">${dupPathsHTML(d)}</td></tr>`).join('');
 $('#exactList').innerHTML=DATA.duplicates.exactFiles.map(d=>`<div class="dup-pair"><strong>Pair ${d.group}:</strong><div class="files">${esc(d.document_a)}</div><div class="files">${esc(d.document_b)}</div></div>`).join('');
 renderExplorer();renderTx();renderClaims();
-</script></body></html>
+</script>
+
+<style>
+/* Theme toggle beside the existing Home button */
+.theme-switch {
+  position: fixed;
+  top: 18px;
+  right: 155px;
+  z-index: 1001;
+  padding: 12px 18px;
+  border: 1px solid #9bb1c8;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0e365f;
+  font-size: 17px;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(22,49,80,.14);
+}
+.theme-switch:hover { border-color: #b18635; }
+
+@media (max-width: 800px) {
+  .theme-switch {
+    top: 10px;
+    right: 115px;
+    padding: 9px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Dark theme across the entire dashboard */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b1322;
+  --card: #142136;
+  --ink: #edf4ff;
+  --ink2: #d3dfef;
+  --muted: #b6c7dc;
+  --line: #374c68;
+  --navy: #dceafd;
+  --gold: #d8ad56;
+  --gold-ink: #f5d58b;
+  --red: #f3a1af;
+  --blue: #94caff;
+  --good: #7cdeb1;
+  --shadow: 0 8px 24px rgba(0,0,0,.2);
+}
+
+html[data-theme="dark"] body {
+  background: linear-gradient(135deg,#0b1322,#17263e);
+  color: #edf4ff;
+}
+
+/* Header and navigation */
+html[data-theme="dark"] .header h1,
+html[data-theme="dark"] .created-by,
+html[data-theme="dark"] .header p,
+html[data-theme="dark"] .panel h2,
+html[data-theme="dark"] .panel h3 {
+  color: #edf4ff;
+}
+html[data-theme="dark"] .brand,
+html[data-theme="dark"] .header .brand {
+  color: #f1c979;
+}
+html[data-theme="dark"] .hero-total {
+  background: #40351f;
+  border-color: #8e7037;
+  color: #f8e3ac;
+}
+html[data-theme="dark"] .hero-total strong {
+  color: #fff1c7;
+}
+html[data-theme="dark"] .home-global,
+html[data-theme="dark"] .theme-switch {
+  background: #20344f;
+  border-color: #5a7595;
+  color: #fff;
+}
+html[data-theme="dark"] .tabs {
+  border-color: #384c66;
+}
+html[data-theme="dark"] .tab {
+  color: #bfd0e5;
+}
+html[data-theme="dark"] .tab.active {
+  background: #4b3a21;
+  border-color: #967542;
+  color: #ffe3a2;
+}
+html[data-theme="dark"] .tab:hover {
+  background: #263b56;
+}
+
+/* Panels, cards and all figures */
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .card {
+  background: #142136;
+  border-color: #374c68;
+}
+html[data-theme="dark"] .card .number,
+html[data-theme="dark"] .value,
+html[data-theme="dark"] .stat-row strong,
+html[data-theme="dark"] .month .v {
+  color: #f3f7ff;
+}
+html[data-theme="dark"] .small-label,
+html[data-theme="dark"] .card .detail,
+html[data-theme="dark"] .caption,
+html[data-theme="dark"] .stat-row span,
+html[data-theme="dark"] .muted,
+html[data-theme="dark"] .copy-note,
+html[data-theme="dark"] .source-note-small,
+html[data-theme="dark"] .source-meta-inline,
+html[data-theme="dark"] .footer,
+html[data-theme="dark"] #crumb,
+html[data-theme="dark"] .month .t {
+  color: #bed0e5;
+}
+html[data-theme="dark"] .copy-note[style] {
+  background: #20344d !important;
+}
+
+/* Buttons, inputs and dropdowns */
+html[data-theme="dark"] .btn,
+html[data-theme="dark"] .pager button,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select {
+  background: #1d304a;
+  color: #edf4ff;
+  border-color: #506884;
+}
+html[data-theme="dark"] input::placeholder {
+  color: #b5c5d9;
+}
+html[data-theme="dark"] .btn.active {
+  background: #b68a42;
+  color: #102139;
+  border-color: #d3a557;
+}
+html[data-theme="dark"] .btn:hover,
+html[data-theme="dark"] .pager button:hover {
+  background: #304763;
+}
+
+/* Donut charts and category breakdown */
+html[data-theme="dark"] .ring .center-big {
+  fill: #f7f9ff;
+}
+html[data-theme="dark"] .ring .center-small {
+  fill: #c0d0e4;
+}
+html[data-theme="dark"] .ring .center-percent {
+  fill: #94d5ff;
+}
+html[data-theme="dark"] .ring .slice {
+  stroke: #142136;
+}
+html[data-theme="dark"] .listing {
+  border-color: #374c68;
+}
+html[data-theme="dark"] .list-row {
+  border-color: #30445f;
+}
+html[data-theme="dark"] .list-row:hover {
+  background: #20344e;
+}
+html[data-theme="dark"] .list-name {
+  color: #f1f6ff;
+}
+html[data-theme="dark"] .list-minor {
+  color: #bfd0e3;
+}
+
+/* Ledger, reimbursement and duplicate tables */
+html[data-theme="dark"] .overflows {
+  border-color: #425674;
+}
+html[data-theme="dark"] .table th {
+  background: #253a56;
+  color: #edf3fc;
+}
+html[data-theme="dark"] .table td {
+  background: #142136;
+  border-color: #30445f;
+  color: #e0eaf7;
+}
+html[data-theme="dark"] .table tr:nth-child(even) td {
+  background: #192a42;
+}
+html[data-theme="dark"] .table td.num {
+  color: #fff !important;
+}
+html[data-theme="dark"] .table td.small {
+  color: #c1d1e5;
+}
+
+/* Source references and documents */
+html[data-theme="dark"] .source-key,
+html[data-theme="dark"] .source-key strong,
+html[data-theme="dark"] .source-trail,
+html[data-theme="dark"] .source-trail .src-file,
+html[data-theme="dark"] .source-trail .src-folder,
+html[data-theme="dark"] .source-trail .src-page,
+html[data-theme="dark"] .source-mini,
+html[data-theme="dark"] .bookitem,
+html[data-theme="dark"] .dup-pair,
+html[data-theme="dark"] .dup-pair strong,
+html[data-theme="dark"] .dup-pair .files {
+  color: #d1e0f0;
+  border-color: #344861;
+}
+
+/* Notices and duplicate warnings */
+html[data-theme="dark"] .textbox {
+  background: #20334c;
+  border-color: #465d79;
+  color: #deebfb;
+}
+html[data-theme="dark"] .alert {
+  background: #382c29;
+  border-color: #8d6051;
+  color: #ffe1d3;
+}
+html[data-theme="dark"] .alert strong {
+  color: #ffbca6;
+}
+html[data-theme="dark"] .flag {
+  background: #492938;
+  border-color: #9c6479;
+  color: #ffc6d1;
+}
+html[data-theme="dark"] .tag {
+  background: #40351f;
+  border-color: #8c713e;
+  color: #ffe4a1;
+}
+html[data-theme="dark"] a,
+html[data-theme="dark"] .links a {
+  color: #91cbff;
+}
+html[data-theme="dark"] .month .b {
+  background: linear-gradient(#75b6ed,#345b89);
+}
+html[data-theme="dark"] .footer {
+  border-color: #344861;
+}
+</style>
+
+<script>
+(function () {
+  const key = "msa-expense-theme";
+  const button = document.createElement("button");
+
+  button.id = "themeToggle";
+  button.className = "theme-switch";
+  button.type = "button";
+
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+
+    button.textContent =
+      theme === "dark" ? "☀ Light" : "☾ Dark";
+
+    button.setAttribute(
+      "aria-label",
+      theme === "dark"
+        ? "Switch to light theme"
+        : "Switch to dark theme"
+    );
+
+    button.setAttribute(
+      "aria-pressed",
+      String(theme === "dark")
+    );
+
+    try {
+      localStorage.setItem(key, theme);
+    } catch (e) {
+      // Dashboard remains functional if storage is blocked.
+    }
+  }
+
+  let savedTheme = "light";
+
+  try {
+    savedTheme = localStorage.getItem(key) || "light";
+  } catch (e) {}
+
+  document.body.appendChild(button);
+  applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+  button.addEventListener("click", function () {
+    const current = document.documentElement.dataset.theme;
+    applyTheme(current === "dark" ? "light" : "dark");
+  });
+})();
+</script>
+
+</body>
+</html>
